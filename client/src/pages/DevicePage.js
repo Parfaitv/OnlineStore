@@ -1,28 +1,29 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Card, Container, Image} from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import bigStar from '../assets/bigStar.png'
+import {useParams} from "react-router-dom";
+import {fetchOneDevices} from "../http/deviceAPI";
 
 const DevicePage = () => {
-    const device = {id: 1, name: 'Iphone 12 pro', price: 25000, rating: 5, img: 'https://www.tradeinn.com/techinn/ru/apple-iphone-12-pro-max-6gb-512gb-6.7/137821856/p'};
-    const description = [
-        {id: 1, title: 'Оперативная память', description: '5 Гб'},
-        {id: 2, title: 'Камера', description: '12 Мп'},
-        {id: 3, title: 'Процессор', description: 'Pentium 3'},
-        {id: 4, title: 'Кол-во ядер', description: '2'},
-        {id: 5, title: 'Аккумулятор', description: '4000'}
-    ]
+    const [device, setDevice] = useState({info: []})
+    const {id} = useParams()
+    useEffect(() => {
+        fetchOneDevices(id).then(data => setDevice(data))
+    },[])
+
+
     return (
         <div>
             <Container className="mt-3">
                 <Row>
                     <Col md={4}>
-                        <Image width={300} height={300} src={device.img} />
+                        <Image width={300} height={300} src={process.env.REACT_APP_API_URL + device.img} />
                     </Col>
                     <Col md={4}>
                         <Row className="d-flex flex-column align-items-center">
-                            <h2>{device.name}</h2>
+                            <h2 className="d-flex align-items-center justify-content-center">{device.name}</h2>
                             <div
                                 className="d-flex align-items-center justify-content-center"
                                 style={{background: `url(${bigStar}) no-repeat center center`, width:240, height:240, backgroundSize:"cover", fontSize:64}}
@@ -43,7 +44,7 @@ const DevicePage = () => {
                 </Row>
                 <Row className="d-flex flex-column m-3">
                     <h1>Характеристики</h1>
-                    {description.map((info, index) =>
+                    {device.info.map((info, index) =>
                         <Row key={info.id} style={{background: index % 2 === 0 ? 'lightgray' : 'transparent', padding: 10}}>
                             {info.title}: {info.description}
                         </Row>
